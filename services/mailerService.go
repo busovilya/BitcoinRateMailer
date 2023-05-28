@@ -22,5 +22,5 @@ func SendEmail(email string, text string) {
    		log.Println(err.Error())
     	return
   	}
-  	log.Println("Email Sent Successfully!")
+  	log.Printf("Email to %s sent successfully!", email)
 }
