@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"encoding/json"
+	"regexp"
 )
 
 func RateHandler(w http.ResponseWriter, r *http.Request) {
@@ -37,6 +38,19 @@ func SubscribeHandler(w http.ResponseWriter, r *http.Request) {
 	
 	email := r.PostForm["email"]
 	if len(email) > 0 {
+		matched, err := regexp.MatchString(`^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$`, email[0])
+		if err != nil || !matched {
+			if err != nil {
+				log.Println(err.Error())
+			} else {
+				log.Printf("email is in the wrong format: %s", email[0])
+			}
+			respJson["result"] = "email is in the wrong format"
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(respJson)
+			return
+		}
+
 		file, err := os.OpenFile("emails.data", os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
 		defer file.Close()
 		
