@@ -1,22 +1,28 @@
 package services
 
 import (
-	"net/http"
-	"fmt"
-	"io/ioutil"
-	"encoding/json"
+	"log"
+
+	"github.com/busovilya/BitcoinRateMailer/providers"
+	viewmodels "github.com/busovilya/BitcoinRateMailer/viewModels"
 )
 
-func GetBtcUahRate() (int, error) {
-	resp, err := http.Get("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=uah")
+type RateService struct {
+	rateProvider providers.RateProvider
+}
+
+func CreateRateService(rateProvider providers.RateProvider) *RateService {
+	return &RateService{
+		rateProvider: rateProvider,
+	}
+}
+
+func (rateSvc *RateService) GetBtcUahRate() (*viewmodels.RateView, error) {
+	rate, err := rateSvc.rateProvider.GetRate()
 	if err != nil {
-		fmt.Println(err.Error())
-		return -1, err
+		log.Println(err.Error())
+		return nil, err
 	}
 
-	respBody, err := ioutil.ReadAll(resp.Body)
-	respJson := make(map[string]map[string]int)
-	json.Unmarshal(respBody, &respJson)
-
-	return respJson["bitcoin"]["uah"], nil
+	return &viewmodels.RateView{Price: rate}, nil
 }
