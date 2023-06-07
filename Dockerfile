@@ -1,8 +1,12 @@
-FROM golang:1.17-alpine
-RUN apk --no-cache add ca-certificates
-WORKDIR /go/src/github.com/busovilya/BitcoinRateMailer
+FROM golang:alpine as builder
+WORKDIR /app
+COPY go.mod go.mod
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -a -o BitcoinRateMailer .
-EXPOSE 10000
+RUN go mod download
+RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build main.go
 
-ENTRYPOINT ["./BitcoinRateMailer"]
+FROM debian AS runner
+WORKDIR /app
+COPY --from=builder /app/main .
+EXPOSE 10000
+ENTRYPOINT ["./main"]
