@@ -6,6 +6,7 @@ import (
 
 	"github.com/busovilya/BitcoinRateMailer/models"
 	"github.com/busovilya/BitcoinRateMailer/services"
+	"github.com/busovilya/BitcoinRateMailer/types"
 )
 
 type SubscriptionHandler struct {
@@ -27,7 +28,14 @@ func (subscHandler *SubscriptionHandler) SubscribeHandler(w http.ResponseWriter,
 	}
 
 	email := r.FormValue("email")
-	err = subscHandler.subscriptionSvc.Subscribe(models.Subscription{Email: email})
+	coin := r.FormValue("coin")
+	currency := r.FormValue("currency")
+
+	err = subscHandler.subscriptionSvc.Subscribe(models.Subscription{
+		Email:      email,
+		Coin:       types.Coin(coin),
+		VsCurrency: types.Currency(currency),
+	})
 	if err != nil {
 		w.WriteHeader(http.StatusConflict)
 		log.Println(err.Error())

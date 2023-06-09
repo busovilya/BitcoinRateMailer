@@ -1,7 +1,11 @@
 package viewmodels
 
-import "github.com/busovilya/BitcoinRateMailer/providers"
+import (
+	"github.com/busovilya/BitcoinRateMailer/types"
+)
 
 type RateView struct {
-	Price providers.RateValue `json:"price"`
+	Token    types.Coin      `json:"coin"`
+	Currency types.Currency  `json:"currency"`
+	Price    types.RateValue `json:"price"`
 }

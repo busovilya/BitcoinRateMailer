@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 
@@ -33,7 +34,7 @@ func (repo *SubscriptionFileRepo) Add(sub *models.Subscription) error {
 		return err
 	}
 
-	_, err = file.WriteString(sub.Email + "\n")
+	_, err = file.WriteString(fmt.Sprintf("%s\n", sub.String()))
 	if err != nil {
 		log.Println(err.Error())
 		return err
@@ -55,9 +56,12 @@ func (repo *SubscriptionFileRepo) GetSubscriptions() ([]models.Subscription, err
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
-		subscriptions = append(subscriptions, models.Subscription{
-			Email: line,
-		})
+		subscr, err := models.ParseSubscription(line)
+		if err != nil {
+			return nil, err
+		}
+
+		subscriptions = append(subscriptions, *subscr)
 	}
 
 	return subscriptions, nil

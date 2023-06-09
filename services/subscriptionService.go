@@ -29,9 +29,9 @@ func CreateSubscriptionService(
 }
 
 func (subscService *SubscriptionService) Subscribe(subscription models.Subscription) error {
-	isValid := ValidateEmail(subscription.Email)
+	isValid := ValidateSubscription(&subscription)
 	if !isValid {
-		return errors.New(fmt.Sprintf("%s is not valid email", subscription.Email))
+		return errors.New(fmt.Sprintf("%s is not valid subscription", subscription.String()))
 	}
 
 	emailExists, err := subscService.subscriptionRepo.SubscriptionExists(subscription)
@@ -41,7 +41,7 @@ func (subscService *SubscriptionService) Subscribe(subscription models.Subscript
 	}
 
 	if emailExists {
-		return errors.New(fmt.Sprintf("%s already exists", subscription.Email))
+		return errors.New("Subscription already exists")
 	}
 
 	err = subscService.subscriptionRepo.Add(&subscription)
@@ -60,23 +60,34 @@ func (subscService *SubscriptionService) SendEmails() error {
 		return err
 	}
 
-	rate, err := subscService.rateSvc.GetBtcUahRate()
-	if err != nil {
-		log.Println(err.Error())
-		return err
+	messages := make(map[string]string)
+	for _, subscr := range subscriptions {
+		rate, err := subscService.rateSvc.GetRate(subscr.Coin, subscr.VsCurrency)
+		if err != nil {
+			log.Println(err.Error())
+			return err
+		}
+
+		msg, ok := messages[subscr.Email]
+		if !ok {
+			msg = ""
+		}
+		messages[subscr.Email] = fmt.Sprintf(
+			"%s\n%s/%s: %s\n",
+			msg,
+			string(subscr.Coin),
+			string(subscr.VsCurrency),
+			strconv.FormatFloat(float64(*rate), 'f', -1, 64))
+
 	}
 
-	emails := []string{}
-	for _, sub := range subscriptions {
-		emails = append(emails, sub.Email)
+	for email, msg := range messages {
+		err = SendEmail(email, msg, "Crypto rates")
+		if err != nil {
+			log.Println(err.Error())
+			return err
+		}
 	}
-
-	err = SendEmails(emails, strconv.FormatFloat(float64(rate.Price), 'f', -1, 64), "BTC/UAH")
-	if err != nil {
-		log.Println(err.Error())
-		return err
-	}
-
 	return nil
 }
 
@@ -96,6 +107,30 @@ func SendEmails(emails []string, msg string, subject string) error {
 	}
 
 	return nil
+}
+
+func SendEmail(email string, msg string, subject string) error {
+	from := os.Getenv("ENV_SENDER_EMAIL")
+	password := os.Getenv("ENV_SENDER_PASSWORD")
+	smtpHost := "smtp.gmail.com"
+	smtpPort := "587"
+
+	message := []byte(fmt.Sprintf("Subject:%s\nTo:%s\n\n%s", subject, email, msg))
+	auth := smtp.PlainAuth("", from, password, smtpHost)
+
+	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, []string{email}, message)
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+
+	return nil
+}
+
+func ValidateSubscription(subscr *models.Subscription) bool {
+	return ValidateEmail(subscr.Email) &&
+		len(subscr.Coin) != 0 &&
+		len(subscr.VsCurrency) != 0
 }
 
 func ValidateEmail(email string) bool {

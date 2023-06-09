@@ -6,6 +6,9 @@ import (
 	"net/http"
 
 	"github.com/busovilya/BitcoinRateMailer/services"
+	"github.com/busovilya/BitcoinRateMailer/types"
+	viewmodels "github.com/busovilya/BitcoinRateMailer/viewModels"
+	"github.com/gorilla/mux"
 )
 
 type RateHandler struct {
@@ -19,9 +22,18 @@ func CreateRateHandler(rateSvc *services.RateService) *RateHandler {
 }
 
 func (rateHandler *RateHandler) HandleRateRequest(w http.ResponseWriter, r *http.Request) {
-	rate, err := rateHandler.rateSvc.GetBtcUahRate()
+	vars := mux.Vars(r)
+	coin := vars["coin"]
+	currency := vars["currency"]
+
+	rate, err := rateHandler.rateSvc.GetRate(
+		types.Coin(coin),
+		types.Currency(currency))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		if err == services.CoinNotSupportedError {
+			json.NewEncoder(w).Encode(viewmodels.Error{Error: "coin is not supported"})
+		}
 		log.Println(err.Error())
 		return
 	}
