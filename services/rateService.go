@@ -10,16 +10,22 @@ import (
 )
 
 var CoinNotSupportedError = errors.New("Coin is not supported")
+var CurrencyNotSupportedError = errors.New("Currency is not supported")
 
 type RateService struct {
-	rateProvider  providers.RateProvider
-	coinsProvider providers.CoinsProvider
+	rateProvider       providers.RateProvider
+	coinsProvider      providers.CoinsProvider
+	currenciesProvider providers.CurrencyProvider
 }
 
-func CreateRateService(rateProvider providers.RateProvider, coinsProvider providers.CoinsProvider) *RateService {
+func CreateRateService(
+	rateProvider providers.RateProvider,
+	coinsProvider providers.CoinsProvider,
+	currenciesProvider providers.CurrencyProvider) *RateService {
 	return &RateService{
-		rateProvider:  rateProvider,
-		coinsProvider: coinsProvider,
+		rateProvider:       rateProvider,
+		coinsProvider:      coinsProvider,
+		currenciesProvider: currenciesProvider,
 	}
 }
 
@@ -35,6 +41,17 @@ func (rateSvc *RateService) GetRate(coin types.Coin, currency types.Currency) (*
 		return nil, CoinNotSupportedError
 	}
 
+	currencies, err := rateSvc.currenciesProvider.GetSupportedCurrencies()
+	if err != nil {
+		log.Println(err.Error())
+		return nil, err
+	}
+	currencySupported := isCurrencySupported(&currencies, models.Currency(currency))
+
+	if !currencySupported {
+		return nil, CurrencyNotSupportedError
+	}
+
 	rate, err := rateSvc.rateProvider.GetRate(coin, currency)
 	if err != nil {
 		log.Println(err.Error())
@@ -47,6 +64,16 @@ func (rateSvc *RateService) GetRate(coin types.Coin, currency types.Currency) (*
 func isCoinSupported(coins *[]models.Coin, coinId string) bool {
 	for _, item := range *coins {
 		if item.Id == coinId {
+			return true
+		}
+	}
+
+	return false
+}
+
+func isCurrencySupported(currencies *[]models.Currency, currency models.Currency) bool {
+	for _, item := range *currencies {
+		if item == currency {
 			return true
 		}
 	}

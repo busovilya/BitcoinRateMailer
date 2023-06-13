@@ -18,7 +18,7 @@ func CreateCoinsHandler(coinsSvc *services.CoinsService) *CoinsHandler {
 	}
 }
 
-func (coinsHandler *CoinsHandler) CoinsHandler(w http.ResponseWriter, r *http.Request) {
+func (coinsHandler *CoinsHandler) HandleCoins(w http.ResponseWriter, r *http.Request) {
 	coins, err := coinsHandler.coinsSvc.GetCoins()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)

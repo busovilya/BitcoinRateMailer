@@ -2,7 +2,6 @@ package providers
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -11,12 +10,11 @@ import (
 	"github.com/busovilya/BitcoinRateMailer/models"
 )
 
-type CoinsProvider struct {
-}
+type CurrencyProvider struct{}
 
-func (provider *CoinsProvider) GetCoins() ([]models.Coin, error) {
+func (provider *CurrencyProvider) GetSupportedCurrencies() ([]models.Currency, error) {
 	url := fmt.Sprintf(
-		"https://api.coingecko.com/api/v3/coins/list",
+		"https://api.coingecko.com/api/v3/simple/supported_vs_currencies",
 	)
 	resp, err := http.Get(url)
 	if err != nil {
@@ -24,19 +22,15 @@ func (provider *CoinsProvider) GetCoins() ([]models.Coin, error) {
 		return nil, err
 	}
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("Failed HTTP request to API")
-	}
-
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 
-	var coinsList []models.Coin
-	err = json.Unmarshal(body, &coinsList)
+	var currenciesList []models.Currency
+	err = json.Unmarshal(body, &currenciesList)
 	if err != nil {
 		log.Println(err.Error())
 		return nil, err
 	}
 
-	return coinsList, nil
+	return currenciesList, nil
 }
