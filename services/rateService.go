@@ -32,7 +32,6 @@ func CreateRateService(
 func (rateSvc *RateService) GetRate(coin types.Coin, currency types.Currency) (*types.RateValue, error) {
 	coins, err := rateSvc.coinsProvider.GetCoins()
 	if err != nil {
-		log.Println(err.Error())
 		return nil, err
 	}
 

@@ -2,7 +2,6 @@ package providers
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -10,16 +9,33 @@ import (
 	"github.com/busovilya/BitcoinRateMailer/models"
 )
 
-type CurrencyProvider struct{}
+type CurrencyProvider interface {
+	GetSupportedCurrencies() ([]models.Currency, error)
+}
 
-func (provider *CurrencyProvider) GetSupportedCurrencies() ([]models.Currency, error) {
-	url := fmt.Sprintf(
-		"https://api.coingecko.com/api/v3/simple/supported_vs_currencies",
-	)
-	resp, err := http.Get(url)
+type RestAPICurrencyProvider struct {
+	url string
+}
+
+func CreateRestAPICurrencyProvider(url string) CurrencyProvider {
+	return RestAPICurrencyProvider{
+		url: url,
+	}
+}
+
+func CreateCoingeckoCurrencyProvider() CurrencyProvider {
+	return CreateRestAPICurrencyProvider("https://api.coingecko.com/api/v3/simple/supported_vs_currencies")
+}
+
+func (provider RestAPICurrencyProvider) GetSupportedCurrencies() ([]models.Currency, error) {
+	resp, err := http.Get(provider.url)
 	if err != nil {
 		log.Println(err.Error())
 		return nil, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, APIResponseNotOKError
 	}
 
 	defer resp.Body.Close()

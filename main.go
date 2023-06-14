@@ -15,15 +15,18 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	router := mux.NewRouter()
 
-	coinsSvc := services.CreateCoinsService(providers.CoinsProvider{})
+	coinsProvider := providers.CreateCoingeckoProviderCoins()
+	coinsSvc := services.CreateCoinsService(&coinsProvider)
 	coinsHandler := handlers.CreateCoinsHandler(coinsSvc)
 	router.HandleFunc("/coins", coinsHandler.HandleCoins)
 
-	currenciesSvc := services.CreateCurrencyService(&providers.CurrencyProvider{})
+	currencyProvider := providers.CreateCoingeckoCurrencyProvider()
+	currenciesSvc := services.CreateCurrencyService(&currencyProvider)
 	currenciesHandler := handlers.CreateCurrencyHandler(currenciesSvc)
 	router.HandleFunc("/currencies", currenciesHandler.HandleCurrencies)
 
-	rateSvc := services.CreateRateService(providers.RateProvider{}, providers.CoinsProvider{}, providers.CurrencyProvider{})
+	rateProvider := providers.CreateCoingeckoRateProvider()
+	rateSvc := services.CreateRateService(rateProvider, coinsProvider, currencyProvider)
 	rateHandler := handlers.CreateRateHandler(rateSvc)
 	router.HandleFunc("/rate/{coin}/{currency}", rateHandler.HandleRateRequest)
 

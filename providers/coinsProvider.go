@@ -3,7 +3,6 @@ package providers
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -11,21 +10,42 @@ import (
 	"github.com/busovilya/BitcoinRateMailer/models"
 )
 
-type CoinsProvider struct {
+var APIResponseNotOKError = errors.New("Failed HTTP request to API")
+
+type CoinsProvider interface {
+	GetCoins() ([]models.Coin, error)
 }
 
-func (provider *CoinsProvider) GetCoins() ([]models.Coin, error) {
-	url := fmt.Sprintf(
-		"https://api.coingecko.com/api/v3/coins/list",
-	)
-	resp, err := http.Get(url)
+type RestAPICoinsProvider struct {
+	url string
+}
+
+func CreateRestAPICoinsProvider(url string) CoinsProvider {
+	return RestAPICoinsProvider{
+		url: url,
+	}
+}
+
+func CreateCoingeckoProviderCoins() CoinsProvider {
+	return CreateRestAPICoinsProvider("https://api.coingecko.com/api/v3/coins/list")
+}
+
+func (provider RestAPICoinsProvider) GetCoins() ([]models.Coin, error) {
+	reuqest, err := http.NewRequest(http.MethodGet, provider.url, nil)
+	if err != nil {
+		log.Println(err.Error())
+		return nil, err
+	}
+
+	client := http.Client{}
+	resp, err := client.Do(reuqest)
 	if err != nil {
 		log.Println(err.Error())
 		return nil, err
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("Failed HTTP request to API")
+		return nil, APIResponseNotOKError
 	}
 
 	defer resp.Body.Close()

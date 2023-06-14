@@ -11,9 +11,9 @@ type CoinsService struct {
 	coinsProvider providers.CoinsProvider
 }
 
-func CreateCoinsService(coinsProvider providers.CoinsProvider) *CoinsService {
+func CreateCoinsService(coinsProvider *providers.CoinsProvider) *CoinsService {
 	return &CoinsService{
-		coinsProvider: coinsProvider,
+		coinsProvider: *coinsProvider,
 	}
 }
 
