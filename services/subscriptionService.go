@@ -14,6 +14,8 @@ import (
 	"github.com/busovilya/CryptoRateMailer/repositories"
 )
 
+var SubscriptionExistsError = errors.New("Subscription already exists")
+
 type SubscriptionService struct {
 	subscriptionRepo repositories.SubscriptionRepository
 	rateSvc          RateService
@@ -41,7 +43,7 @@ func (subscService *SubscriptionService) Subscribe(subscription models.Subscript
 	}
 
 	if emailExists {
-		return errors.New("Subscription already exists")
+		return SubscriptionExistsError
 	}
 
 	err = subscService.subscriptionRepo.Add(&subscription)

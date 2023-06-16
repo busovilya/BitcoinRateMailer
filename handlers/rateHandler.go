@@ -32,7 +32,14 @@ func (rateHandler *RateHandler) HandleRateRequest(w http.ResponseWriter, r *http
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		if err == services.CoinNotSupportedError {
-			json.NewEncoder(w).Encode(viewmodels.Error{Error: "coin is not supported"})
+			json.NewEncoder(w).Encode(
+				viewmodels.ErrorResponse{Message: "coin is not supported"},
+			)
+		}
+		if err == services.CurrencyNotSupportedError {
+			json.NewEncoder(w).Encode(
+				viewmodels.ErrorResponse{Message: "currency is not supported"},
+			)
 		}
 		log.Println(err.Error())
 		return

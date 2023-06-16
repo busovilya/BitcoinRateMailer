@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -37,7 +38,12 @@ func (subscHandler *SubscriptionHandler) SubscribeHandler(w http.ResponseWriter,
 		VsCurrency: types.Currency(currency),
 	})
 	if err != nil {
-		w.WriteHeader(http.StatusConflict)
+		if err == services.SubscriptionExistsError {
+			w.WriteHeader(http.StatusConflict)
+			json.NewEncoder(w).Encode(err.Error())
+		} else {
+			w.WriteHeader(http.StatusBadRequest)
+		}
 		log.Println(err.Error())
 		return
 	}
