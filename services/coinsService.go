@@ -3,8 +3,8 @@ package services
 import (
 	"log"
 
-	"github.com/busovilya/BitcoinRateMailer/providers"
-	"github.com/busovilya/BitcoinRateMailer/types"
+	"github.com/busovilya/CryptoRateMailer/providers"
+	"github.com/busovilya/CryptoRateMailer/types"
 )
 
 type CoinsService struct {

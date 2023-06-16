@@ -5,9 +5,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/busovilya/BitcoinRateMailer/services"
-	"github.com/busovilya/BitcoinRateMailer/types"
-	viewmodels "github.com/busovilya/BitcoinRateMailer/viewModels"
+	"github.com/busovilya/CryptoRateMailer/services"
+	"github.com/busovilya/CryptoRateMailer/types"
+	viewmodels "github.com/busovilya/CryptoRateMailer/viewModels"
 	"github.com/gorilla/mux"
 )
 

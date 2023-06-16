@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/busovilya/BitcoinRateMailer/services"
+	"github.com/busovilya/CryptoRateMailer/services"
 )
 
 type CurrencyHandler struct {

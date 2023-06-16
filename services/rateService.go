@@ -4,9 +4,9 @@ import (
 	"errors"
 	"log"
 
-	"github.com/busovilya/BitcoinRateMailer/models"
-	"github.com/busovilya/BitcoinRateMailer/providers"
-	"github.com/busovilya/BitcoinRateMailer/types"
+	"github.com/busovilya/CryptoRateMailer/models"
+	"github.com/busovilya/CryptoRateMailer/providers"
+	"github.com/busovilya/CryptoRateMailer/types"
 )
 
 var CoinNotSupportedError = errors.New("Coin is not supported")

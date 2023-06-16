@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/busovilya/BitcoinRateMailer/types"
+	"github.com/busovilya/CryptoRateMailer/types"
 )
 
 type RateProvider interface {

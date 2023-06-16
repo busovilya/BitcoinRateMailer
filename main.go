@@ -4,10 +4,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/busovilya/BitcoinRateMailer/handlers"
-	"github.com/busovilya/BitcoinRateMailer/providers"
-	"github.com/busovilya/BitcoinRateMailer/repositories"
-	"github.com/busovilya/BitcoinRateMailer/services"
+	"github.com/busovilya/CryptoRateMailer/handlers"
+	"github.com/busovilya/CryptoRateMailer/providers"
+	"github.com/busovilya/CryptoRateMailer/repositories"
+	"github.com/busovilya/CryptoRateMailer/services"
 	"github.com/gorilla/mux"
 )
 

@@ -1,4 +1,4 @@
-module github.com/busovilya/BitcoinRateMailer
+module github.com/busovilya/CryptoRateMailer
 
 go 1.20
 

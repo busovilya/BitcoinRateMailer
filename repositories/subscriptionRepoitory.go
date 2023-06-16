@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/busovilya/BitcoinRateMailer/models"
+	"github.com/busovilya/CryptoRateMailer/models"
 )
 
 type SubscriptionRepository interface {

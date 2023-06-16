@@ -1,7 +1,7 @@
 package viewmodels
 
 import (
-	"github.com/busovilya/BitcoinRateMailer/types"
+	"github.com/busovilya/CryptoRateMailer/types"
 )
 
 type RateView struct {

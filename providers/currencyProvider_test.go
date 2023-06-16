@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/busovilya/BitcoinRateMailer/models"
+	"github.com/busovilya/CryptoRateMailer/models"
 	"github.com/stretchr/testify/assert"
 )
 

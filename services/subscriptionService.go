@@ -10,8 +10,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/busovilya/BitcoinRateMailer/models"
-	"github.com/busovilya/BitcoinRateMailer/repositories"
+	"github.com/busovilya/CryptoRateMailer/models"
+	"github.com/busovilya/CryptoRateMailer/repositories"
 )
 
 type SubscriptionService struct {

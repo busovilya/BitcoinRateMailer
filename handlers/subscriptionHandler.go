@@ -4,9 +4,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/busovilya/BitcoinRateMailer/models"
-	"github.com/busovilya/BitcoinRateMailer/services"
-	"github.com/busovilya/BitcoinRateMailer/types"
+	"github.com/busovilya/CryptoRateMailer/models"
+	"github.com/busovilya/CryptoRateMailer/services"
+	"github.com/busovilya/CryptoRateMailer/types"
 )
 
 type SubscriptionHandler struct {

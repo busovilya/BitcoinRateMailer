@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/busovilya/BitcoinRateMailer/types"
+	"github.com/busovilya/CryptoRateMailer/types"
 )
 
 type Subscription struct {

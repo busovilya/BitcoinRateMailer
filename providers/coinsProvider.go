@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/busovilya/BitcoinRateMailer/models"
+	"github.com/busovilya/CryptoRateMailer/models"
 )
 
 var APIResponseNotOKError = errors.New("Failed HTTP request to API")
